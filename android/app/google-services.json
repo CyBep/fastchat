@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "22432547085",
+    "firebase_url": "https://fastchat-dd3fc.firebaseio.com",
+    "project_id": "fastchat-dd3fc",
+    "storage_bucket": "fastchat-dd3fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:22432547085:android:795eed4d5c92db92c37044",
+        "android_client_info": {
+          "package_name": "com.fastchat.fastchat_0_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "22432547085-s24as9mmurhu6qcvpvm845rgp51hs6lf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvw6PbEXbLod5FPTvwl8mt5zA_ZKDSGRk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "22432547085-s24as9mmurhu6qcvpvm845rgp51hs6lf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "22432547085-7kurs4d5ci2nqf734qnscuo1qcg515cn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fastchat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
