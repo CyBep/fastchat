@@ -54,7 +54,8 @@ class StatelessStreamBuilder extends StatelessWidget {
                   );
                 }
               } else {
-                return Container();
+                if (true)
+                 return Container();
               }
             })
       ],

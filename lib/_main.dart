@@ -30,7 +30,7 @@ class MyHomePage extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              document["names"],
+              document["namess"],
               style: Theme.of(context).textTheme.headline,
             ),
           ),
