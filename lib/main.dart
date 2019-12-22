@@ -4,6 +4,8 @@ import 'package:fastchat_0_2/firebase/auth/phone_auth/verify.dart';
 import 'package:fastchat_0_2/test_screen.dart';
 import 'firebase/auth/phone_auth/get_phone.dart';
 import 'package:flutter/material.dart';
+import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
+import 'package:fastchat_0_2/screen/root_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,8 +13,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: PhoneAuthGetPhone(),
       debugShowCheckedModeBanner: false,
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new RootPage()
     );
   }
 }

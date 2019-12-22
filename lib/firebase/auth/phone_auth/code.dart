@@ -93,7 +93,9 @@ class FirebasePhoneAuth {
     });
   }
 
-  static onAuthenticationSuccessful() {}
+  static onAuthenticationSuccessful() {
+
+  }
 
   static addState(PhoneAuthState state){
     phoneAuthState.sink.add(state);
