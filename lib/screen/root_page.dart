@@ -1,8 +1,7 @@
+import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fastchat_0_2/services/authentication.dart';
-import 'package:fastchat_0_2/screen/login_signup_page.dart';
-import 'package:fastchat_0_2/screen/home_page.dart';
-import 'package:fastchat_0_2/screen/login_phone_screen.dart/';
+
+import 'home_page.dart';
 
 enum AuthStatus {
   NOT_DETERMINED,
@@ -11,11 +10,11 @@ enum AuthStatus {
 }
 
 class RootPage extends StatefulWidget {
-  RootPage({this.auth});
+//  RootPage({this.auth})
 
-  final BaseAuth auth;
+//  final BaseAuth auth;
+  final BaseAuth auth = new Auth();
 
-  @override
   State<StatefulWidget> createState() => new _RootPageState();
 }
 
@@ -23,20 +22,19 @@ class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   String _userId = "";
 
-  @override
   void initState() {
-    super.initState();
-
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        if (user != null) {
-          _userId = user?.uid;
-        }
-
-        authStatus =
-        user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
-      });
-    });
+//    super.initState();
+////    widget.auth.signInPhone("+79376977289");
+////    widget.auth.signInPhone("+79376906348");
+//    widget.auth.getCurrentUser().then((user) {
+//      setState(() {
+//        if (user != null) {
+//          _userId = user?.uid;
+//        }
+//        authStatus =
+//        user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+//      });
+//    });
   }
 
   Widget buildWaitingScreen() {
@@ -48,54 +46,27 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
+    return HomePage();
     switch (authStatus) {
       case AuthStatus.NOT_DETERMINED:
         return buildWaitingScreen();
         break;
       case AuthStatus.NOT_LOGGED_IN:
-//        return new LoginSignupPage(
-//          auth: widget.auth,
-//          loginCallback: loginCallback,
-//        );
-        return new LoginSignUpPhone(
-          auth: widget.auth,
-          loginCallback: loginCallback,
-        );
+        return buildWaitingScreen();
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
-          return new HomePage(
-            userId: _userId,
-            auth: widget.auth,
-            logoutCallback: logoutCallback,
+          return HomePage(
+//            userId: _userId,
+//            auth: widget.auth,
           );
-        } else
-          return buildWaitingScreen();
+        }
+        return buildWaitingScreen();
         break;
       default:
         return buildWaitingScreen();
     }
   }
-
-  void loginCallback() {
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        _userId = user.uid.toString();
-      });
-    });
-    setState(() {
-      authStatus = AuthStatus.LOGGED_IN;
-    });
-  }
-
-  void logoutCallback() {
-    setState(() {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-      _userId = "";
-    });
-  }
-
 }

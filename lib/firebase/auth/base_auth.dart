@@ -114,8 +114,7 @@ class Auth implements BaseAuth {
 
   @override
   Future<void> signOut() {
-    // TODO: implement signOut
-    return null;
+    return _firebaseAuth.signOut();
   }
 
   static addState(PhoneAuthState state){
