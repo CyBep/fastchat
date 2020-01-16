@@ -136,7 +136,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
         );
         break;
       case PhoneAuthState.Verified:
-        return LetsChat();
+        Navigator.pushNamed(context, '/');
         break;
     }
   }

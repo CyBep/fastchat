@@ -36,11 +36,15 @@ class _HomePageState extends State<HomePage> {
         .equalTo(widget.userId);
 
     print("test");
-    _userQuery.onValue.isEmpty.then((bool value){
-      print(value);
-      if (!value)
+    _userQuery.once().then((DataSnapshot snapshot){
+      if (snapshot.value==null)
         addChatUser();
     });
+//    _userQuery.onValue.isEmpty.then((bool value){
+//      print(value);
+//      if (!value)
+//        addChatUser();
+//    });
     print("test2");
 
 //        .then((DataSnapshot value) {
@@ -138,7 +142,8 @@ class _HomePageState extends State<HomePage> {
           new IconButton(
               icon: new Icon(Icons.exit_to_app),
               onPressed: (){
-//                widget.auth.signOut();
+                widget.auth.signOut();
+                Navigator.pushNamed(context, '/');
               }
           ),
         ],
