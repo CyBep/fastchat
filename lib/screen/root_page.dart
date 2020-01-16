@@ -1,4 +1,5 @@
 import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
+import 'package:fastchat_0_2/screen/login_page.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -23,18 +24,19 @@ class _RootPageState extends State<RootPage> {
   String _userId = "";
 
   void initState() {
-//    super.initState();
-////    widget.auth.signInPhone("+79376977289");
-////    widget.auth.signInPhone("+79376906348");
-//    widget.auth.getCurrentUser().then((user) {
-//      setState(() {
-//        if (user != null) {
-//          _userId = user?.uid;
-//        }
-//        authStatus =
-//        user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
-//      });
-//    });
+    super.initState();
+//    widget.auth.signInPhone("+79376977289");
+//    widget.auth.signInPhone("+79376906348");
+    widget.auth.getCurrentUser().then((user) {
+      setState(() {
+        if (user != null) {
+          _userId = user?.uid;
+        }
+
+        authStatus =
+          user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+      });
+    });
   }
 
   Widget buildWaitingScreen() {
@@ -48,19 +50,18 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    return HomePage();
     switch (authStatus) {
       case AuthStatus.NOT_DETERMINED:
         return buildWaitingScreen();
         break;
       case AuthStatus.NOT_LOGGED_IN:
-        return buildWaitingScreen();
+        return PhoneAuthGetPhone();
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
           return HomePage(
-//            userId: _userId,
-//            auth: widget.auth,
+            userId: _userId,
+            auth: widget.auth,
           );
         }
         return buildWaitingScreen();
