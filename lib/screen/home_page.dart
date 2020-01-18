@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:fastchat_0_2/models/chat.dart';
 import 'package:fastchat_0_2/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
 
@@ -22,48 +24,42 @@ class _HomePageState extends State<HomePage> {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   DatabaseReference _counterRef;
   DatabaseReference _chatsRef;
+  StreamSubscription<Event> _onChatAddedSubscription;
+  List<Chat> _chatsList;
 //  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     _chatsRef = _database.reference().child('chats');
-//    User currentUser = new User(widget.userId);
     print(widget.userId);
-//    print(currentUser);
     Query _userQuery = _chatsRef
         .orderByChild("userId")
         .equalTo(widget.userId);
 
-    print("test");
     _userQuery.once().then((DataSnapshot snapshot){
       if (snapshot.value==null)
         addChatUser();
     });
-//    _userQuery.onValue.isEmpty.then((bool value){
-//      print(value);
-//      if (!value)
-//        addChatUser();
-//    });
-    print("test2");
 
-//        .then((DataSnapshot value) {
-//      print("test2");
-//      print(value);
-//    });
-//    _userQuery.once().then((DataSnapshot value) {
-//      print("test2");
-//      print(value);
-//    });
-//
-//    _userQuery.once().then((onValue) {
-//      print("test");
-//    });
+    _chatsList = new List();
+    Query _chatQuery = _chatsRef
+        .orderByChild("userId")
+        .equalTo(widget.userId);
+    _onChatAddedSubscription = _chatQuery.onChildAdded.listen(onEntryAdded);
+//    _onTodoChangedSubscription =
+//        _todoQuery.onChildChanged.listen(onEntryChanged);
+  }
+
+  onEntryAdded(Event event) {
+    setState(() {
+      _chatsList.add(Chat.fromSnapshot(event.snapshot));
+    });
   }
 
   @override
   void dispose() {
-//    _onTodoAddedSubscription.cancel();
+    _onChatAddedSubscription.cancel();
 //    _onTodoChangedSubscription.cancel();
     super.dispose();
   }
@@ -72,6 +68,7 @@ class _HomePageState extends State<HomePage> {
 //    if (transactionResult.committed) {
       _chatsRef.push().set(<String, String>{
         "userId": widget.userId,
+        "name": "Диспетчер",
         "messeges": "",
       }).then((_) {
         print('Transaction  committed.');
@@ -133,6 +130,41 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Widget __buildListItem(BuildContext context, Chat chat) {
+    print(chat.name);
+    return ListTile(
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(
+              chat.name,
+              style: Theme.of(context).textTheme.headline,
+            ),
+          ),
+//          Container(
+//            decoration: const BoxDecoration(
+//                color: Color(0xffddddff)
+//            ),
+//            padding: const EdgeInsets.all(10.0),
+//            child: Text(
+//              document["votes"].toString(),
+//              style: Theme.of(context).textTheme.display1,
+//            ),
+//          )
+        ],
+      ),
+      onTap: () {
+//        Firestore.instance.runTransaction((transaction) async{
+//          DocumentSnapshot freshSnap =
+//          await transaction.get(document.reference);
+//          await transaction.update(freshSnap.reference, {
+//            "votes": freshSnap["votes"] + 1
+//          });
+//        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +179,48 @@ class _HomePageState extends State<HomePage> {
               }
           ),
         ],
+      ),
+      body: StreamBuilder(
+          stream: _chatsRef.onValue,
+          builder: (context, snap){
+            if (!snap.hasData) return const Text("Loading...");
+            DataSnapshot snapshot = snap.data.snapshot;
+            List<Chat> chats = [];
+
+            snapshot.value.forEach((key, value){
+              Chat chat = new Chat(value);
+              print(chat.toJson());
+//              chats.add(chat);
+            });
+//            snap.data
+//            snap.data.forEach((childSnapshot) {
+//              print(childSnapshot);
+////              var key = childSnapshot.key; // you will get your key here
+//            });
+
+//            print(snapshot);
+//            _list = snapshot.value;
+//            Chat chat = new Chat(snapshot.value.toString());
+//            print(chat.toJson());
+//            print(snapshot.value.toString());
+
+//            snapshot.value.forEach((f){
+//              print(f);
+////              if(f!=null){
+//////                item.add(f);
+////              }
+//            });
+
+            return const Text("est");
+//            print(chats[0].userId);
+//            return ListView.builder(
+//              itemExtent: 80,
+//              itemCount: chats.length,
+//              itemBuilder: (context, index) =>
+//                  __buildListItem(context, chats[index]),
+//
+//            );
+          },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
