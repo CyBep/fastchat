@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
             onTap: (){
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LetsChat(chat)),
+                  MaterialPageRoute(builder: (context) => LetsChat(chat, widget.userId)),
               );
             },
             trailing: IconButton(

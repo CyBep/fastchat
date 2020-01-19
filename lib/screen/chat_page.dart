@@ -13,8 +13,9 @@ class Session {
 
 class LetsChat extends StatefulWidget {
   Chat _chat;
+  final String userId;
 
-  LetsChat(this._chat);
+  LetsChat(this._chat, this.userId);
 
   @override
   _LetsChatState createState() => _LetsChatState();
@@ -36,7 +37,7 @@ class _LetsChatState extends State<LetsChat> {
 
   @override
   void initState() {
-    _messegesRef = _database.reference().child('chats'+widget._chat.key).child("messeges");
+    _messegesRef = _database.reference().child('chats').child(widget._chat.key).child("messeges");
 
     _onMessagesAddedSubscription = _messegesRef.onChildAdded.listen(onEntryAdded);
     _onMessagesChangedSubscription = _messegesRef.onChildChanged.listen(onEntryChanged);
@@ -44,17 +45,20 @@ class _LetsChatState extends State<LetsChat> {
   }
 
   onEntryAdded(Event event) {
+    DataSnapshot snapshot = event.snapshot;
     setState(() {
       list.add(new Message(
-          message: "asd",
-          timestamp: DateTime.now().toString(),
-          type: list.length % 2 == 0
+          message: snapshot.value["message"],
+          userId: snapshot.value["userId"],
+          timestamp: snapshot.value["timestamp"],
+          type: snapshot.value["userId"] == widget.userId
               ? MessageType.IncomingText
               : MessageType.OutgoingText));
     });
   }
 
   onEntryChanged(Event event) {
+    print(event.snapshot);
     var oldEntry = list.singleWhere((entry) {
       return entry.message == "asd";
     });
@@ -115,20 +119,23 @@ class _LetsChatState extends State<LetsChat> {
   }
 
   sendMessage(message) {
-    if (_textEditingController.text.length > 0) {
+//    if (_textEditingController.text.length > 0) {
       _textEditingController.clear();
-      list.add(Message(
+      Message _message = new Message(
           message: message,
-          timestamp: DateTime.now().toString(),
-          type: list.length % 2 == 0
-              ? MessageType.IncomingText
-              : MessageType.OutgoingText));
-      messages.sink.add(list);
+          userId: widget.userId,
+          timestamp: DateTime.now().toString());
+
+      _messegesRef.push().set(_message.toJson()).then((_) {
+        print('Transaction  committed.');
+      }).catchError((_) {
+        print(_);
+      });
       Future.delayed(Duration(milliseconds: 100)).whenComplete(() {
         scrollController.animateTo(scrollController.position.maxScrollExtent,
             duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
       });
-    }
+//    }
   }
 //  Card(
 //  child: TextFormField(
@@ -160,7 +167,6 @@ class _LetsChatState extends State<LetsChat> {
                     key: Key('Messeges-TextFormField'),
 //                    autofocus: true,
                     controller: _textEditingController,
-                    initialValue: null,
                     maxLines: 1,
                     showCursor: true,
                     cursorColor: Colors.blue,
@@ -187,7 +193,8 @@ class _LetsChatState extends State<LetsChat> {
             onPressed: () {
               print("button pressed");
               print(_textEditingController.text);
-              sendMessage(_textEditingController.text);
+//              sendMessage(_textEditingController.text);
+              sendMessage("Сообщение");
             },
             child: Container(
               padding: EdgeInsets.all(8.0),
@@ -203,15 +210,24 @@ class _LetsChatState extends State<LetsChat> {
 }
 
 class Message {
-  String message, author, timestamp, timestampValue;
+  String message, userId, timestamp, timestampValue;
   MessageType type;
 
-  Message(
-      {this.message,
-      this.author,
+  Message({
+      this.message,
+      this.userId,
       this.timestamp,
       this.timestampValue,
       this.type});
+
+  toJson() {
+    return {
+      "message": this.message,
+      "userId": this.userId,
+      "timestamp": this.timestamp,
+      "type": this.type,
+    };
+  }
 }
 
 enum MessageType { IncomingText, OutgoingText }
