@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fastchat_0_2/models/chat.dart';
+import 'package:fastchat_0_2/screen/templates_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -119,7 +120,7 @@ class _LetsChatState extends State<LetsChat> {
   }
 
   sendMessage(message) {
-//    if (_textEditingController.text.length > 0) {
+    if (_textEditingController.text.length > 0) {
       _textEditingController.clear();
       Message _message = new Message(
           message: message,
@@ -135,7 +136,7 @@ class _LetsChatState extends State<LetsChat> {
         scrollController.animateTo(scrollController.position.maxScrollExtent,
             duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
       });
-//    }
+    }
   }
 //  Card(
 //  child: TextFormField(
@@ -151,7 +152,6 @@ class _LetsChatState extends State<LetsChat> {
 //  ),
 //  );
   Widget getSendMessageField() {
-    print(_textEditingController);
     return Row(
       key: Key('sendMessageField'),
       children: <Widget>[
@@ -164,8 +164,6 @@ class _LetsChatState extends State<LetsChat> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: TextFormField(
-                    key: Key('Messeges-TextFormField'),
-//                    autofocus: true,
                     controller: _textEditingController,
                     maxLines: 1,
                     showCursor: true,
@@ -176,7 +174,7 @@ class _LetsChatState extends State<LetsChat> {
                     style: TextStyle(color: Colors.black),
                     onSaved: (String message) {
                       if (message.length != 0) {
-  //                          sendMessage(message);
+                        sendMessage(message);
   //                          _textEditingController.clear();
                       }
                     },
@@ -191,10 +189,22 @@ class _LetsChatState extends State<LetsChat> {
         CupertinoButton(
             padding: EdgeInsets.all(0.0),
             onPressed: () {
+              print("button pressed 2");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Templates()),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.attachment, color: Colors.black26, size: 22.0),
+            )),
+        CupertinoButton(
+            padding: EdgeInsets.all(0.0),
+            onPressed: () {
               print("button pressed");
               print(_textEditingController.text);
-//              sendMessage(_textEditingController.text);
-              sendMessage("Сообщение");
+              sendMessage(_textEditingController.text);
             },
             child: Container(
               padding: EdgeInsets.all(8.0),
@@ -250,7 +260,7 @@ class _TextMessageState extends State<TextMessage> {
         child: selected
             ? Container(color: Colors.blue.withOpacity(0.4), child: child())
             : child(),
-      onLongPress: (){
+        onLongPress: (){
           if(!Session.isSelectMode)
             setState(() {
               Session.isSelectMode = true;

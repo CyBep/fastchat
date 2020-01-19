@@ -167,7 +167,6 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
 
-        // AppName:
         Text(widget.appName,
             textAlign: TextAlign.center,
             style: TextStyle(
