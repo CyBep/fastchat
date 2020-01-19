@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:fastchat_0_2/chat/lets_text.dart';
+import 'package:fastchat_0_2/screen/chat_page.dart';
 import 'package:fastchat_0_2/firebase/auth/phone_auth/verify.dart';
 import 'package:fastchat_0_2/test_screen.dart';
 import 'firebase/auth/phone_auth/get_phone.dart';

@@ -1,20 +1,32 @@
 import 'dart:async';
 
+import 'package:fastchat_0_2/models/chat.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-void main() => runApp(MaterialApp(home: LetsChat()));
-
+//void main() => runApp(MaterialApp(home: LetsChat()));
+//
 class Session {
   static bool isSelectMode = false;
 }
 
 class LetsChat extends StatefulWidget {
+  Chat _chat;
+
+  LetsChat(this._chat);
+
   @override
   _LetsChatState createState() => _LetsChatState();
 }
 
 class _LetsChatState extends State<LetsChat> {
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  DatabaseReference _messegesRef;
+
+  StreamSubscription<Event> _onMessagesAddedSubscription;
+  StreamSubscription<Event> _onMessagesChangedSubscription;
+
   TextEditingController _textEditingController = TextEditingController();
   StreamController<List<Message>> messages = StreamController();
 
@@ -24,13 +36,45 @@ class _LetsChatState extends State<LetsChat> {
 
   @override
   void initState() {
+    _messegesRef = _database.reference().child('chats'+widget._chat.key).child("messeges");
+
+    _onMessagesAddedSubscription = _messegesRef.onChildAdded.listen(onEntryAdded);
+    _onMessagesChangedSubscription = _messegesRef.onChildChanged.listen(onEntryChanged);
     super.initState();
+  }
+
+  onEntryAdded(Event event) {
+    setState(() {
+      list.add(new Message(
+          message: "asd",
+          timestamp: DateTime.now().toString(),
+          type: list.length % 2 == 0
+              ? MessageType.IncomingText
+              : MessageType.OutgoingText));
+    });
+  }
+
+  onEntryChanged(Event event) {
+    var oldEntry = list.singleWhere((entry) {
+      return entry.message == "asd";
+    });
+
+    setState(() {
+      list[list.indexOf(oldEntry)] =
+          Message(message: "asd",
+              timestamp: DateTime.now().toString(),
+              type: list.length % 2 == 0
+                  ? MessageType.IncomingText
+                  : MessageType.OutgoingText);
+    });
   }
 
   @override
   void dispose() {
+    _onMessagesAddedSubscription.cancel();
+    _onMessagesChangedSubscription.cancel();
     messages.close();
-    _textEditingController.dispose();
+//    _textEditingController.dispose();
     messages.sink.close();
     scrollController.dispose();
     super.dispose();
@@ -40,7 +84,7 @@ class _LetsChatState extends State<LetsChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat Screen'),
+        title: Text(widget._chat.name),
       ),
       body: Padding(
         padding: const EdgeInsets.only(
@@ -86,8 +130,21 @@ class _LetsChatState extends State<LetsChat> {
       });
     }
   }
-
+//  Card(
+//  child: TextFormField(
+//  controller: controller,
+//  autofocus: true,
+//  keyboardType: TextInputType.phone,
+//  key: Key('EnterPhone-TextFormField'),
+//  decoration: InputDecoration(
+//  border: InputBorder.none,
+//  errorMaxLines: 1,
+//  prefix: Text("  " + prefix + "  "),
+//  ),
+//  ),
+//  );
   Widget getSendMessageField() {
+    print(_textEditingController);
     return Row(
       key: Key('sendMessageField'),
       children: <Widget>[
@@ -100,30 +157,29 @@ class _LetsChatState extends State<LetsChat> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: TextFormField(
-                      controller: _textEditingController,
-                      maxLines: null,
-                      showCursor: true,
-                      cursorColor: Colors.blue,
-                      keyboardType: TextInputType.text,
-                      maxLengthEnforced: false,
-                      cursorWidth: 3.0,
-                      style: TextStyle(color: Colors.black),
-                      onSaved: (String message) {
-                        if (message.length != 0) {
-                          sendMessage(message);
-//                          _textEditingController.clear();
-                        }
-                      },
-                      decoration: InputDecoration(
-                          hintText: 'Type your message here..',
-                          contentPadding: EdgeInsets.only(
-                              bottom: 15.0, left: 20.0, right: 20.0, top: 10.0),
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.orangeAccent.withOpacity(0.4)),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30.0))))),
-                )),
+                    key: Key('Messeges-TextFormField'),
+//                    autofocus: true,
+                    controller: _textEditingController,
+                    initialValue: null,
+                    maxLines: 1,
+                    showCursor: true,
+                    cursorColor: Colors.blue,
+                    keyboardType: TextInputType.text,
+                    maxLengthEnforced: false,
+                    cursorWidth: 3.0,
+                    style: TextStyle(color: Colors.black),
+                    onSaved: (String message) {
+                      if (message.length != 0) {
+  //                          sendMessage(message);
+  //                          _textEditingController.clear();
+                      }
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Type your message here..',
+                    )
+                  ),
+                )
+            ),
           ),
         ),
         CupertinoButton(

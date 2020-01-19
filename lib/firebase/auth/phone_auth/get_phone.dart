@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:fastchat_0_2/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fastchat_0_2/models/countries.dart';
@@ -8,7 +9,7 @@ import 'package:fastchat_0_2/firebase/auth/phone_auth/verify.dart';
 import 'package:fastchat_0_2/utils/constants.dart';
 import 'code.dart' show FirebasePhoneAuth, PhoneAuthState;
 import 'widgets.dart';
-import 'package:fastchat_0_2/chat/lets_text.dart';
+import 'package:fastchat_0_2/screen/chat_page.dart';
 
 /*
  *  PhoneAuthUI - this file contains whole ui and controllers of ui
@@ -136,7 +137,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
         );
         break;
       case PhoneAuthState.Verified:
-        return LetsChat();
+        Navigator.pushNamed(context, '/');
         break;
     }
   }
