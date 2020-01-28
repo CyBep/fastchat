@@ -1,6 +1,7 @@
 import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
 import 'package:fastchat_0_2/screen/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fastchat_0_2/firebase/auth/phone_auth/code.dart' show FirebasePhoneAuth, PhoneAuthState;
 
 import 'home_page.dart';
 
@@ -25,6 +26,7 @@ class _RootPageState extends State<RootPage> {
 
   void initState() {
     super.initState();
+//    authStatus =  AuthStatus.NOT_LOGGED_IN;
 //    widget.auth.signInPhone("+79376977289");
 //    widget.auth.signInPhone("+79376906348");
     widget.auth.getCurrentUser().then((user) {
@@ -55,7 +57,9 @@ class _RootPageState extends State<RootPage> {
         return buildWaitingScreen();
         break;
       case AuthStatus.NOT_LOGGED_IN:
-        return PhoneAuthGetPhone();
+        return PhoneAuthGetPhone(
+          auth: widget.auth,
+        );
         break;
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {

@@ -75,10 +75,9 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
    *    Scaffold -> SafeArea -> Center -> SingleChildScrollView -> Card()
    *    Card -> FutureBuilder -> Column()
    */
-  Widget _getBody() => Card(
-        color: widget.cardBackgroundColor,
-        elevation: 2.0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+  Widget _getBody() => Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         child: Container(
           height: _height * 8 / 10,
           width: _width * 8 / 10,
@@ -88,20 +87,6 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
   Widget _getColumnBody() => Column(
         children: <Widget>[
-          //  Logo: scaling to occupy 2 parts of 10 in the whole height of device
-          Padding(
-            padding: EdgeInsets.all(_fixedPadding),
-            child: PhoneAuthWidgets.getLogo(
-                logoPath: widget.logo, height: _height * 0.2),
-          ),
-
-          // AppName:
-          Text(widget.appName,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w700)),
 
           SizedBox(height: 20.0),
 
@@ -112,19 +97,19 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
                 child: RichText(
                     text: TextSpan(children: [
                   TextSpan(
-                      text: 'Please enter the ',
+                      text: 'Пожалуйста введите ',
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w400)),
+                          color: Colors.black, fontWeight: FontWeight.w400)),
                   TextSpan(
-                      text: 'One Time Password',
+                      text: 'Одноразовый пародь',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w700)),
                   TextSpan(
-                      text: ' sent to your mobile',
+                      text: ' отправленный на ваш мобильный номер телефона.',
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w400)),
+                          color: Colors.black, fontWeight: FontWeight.w400)),
                 ])),
               ),
               SizedBox(width: 20.0),
@@ -188,10 +173,10 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
           },
           maxLengthEnforced: false,
           textAlign: TextAlign.center,
-          cursorColor: Colors.white,
+          cursorColor: Colors.black,
           keyboardType: TextInputType.number,
           style: TextStyle(
-              fontSize: 20.0, fontWeight: FontWeight.w600, color: Colors.white),
+              fontSize: 20.0, fontWeight: FontWeight.w600, color: Colors.black),
 //          decoration: InputDecoration(
 //              contentPadding: const EdgeInsets.only(
 //                  bottom: 10.0, top: 10.0, left: 4.0, right: 4.0),

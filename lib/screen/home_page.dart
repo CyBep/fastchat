@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fastchat_0_2/models/chat.dart';
+import 'package:fastchat_0_2/models/chats_to_users.dart';
 import 'package:fastchat_0_2/models/user.dart';
 import 'package:fastchat_0_2/screen/chat_page.dart';
 import 'package:flutter/material.dart';
@@ -24,37 +25,73 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseDatabase _database = FirebaseDatabase.instance;
   DatabaseReference _counterRef;
+  DatabaseReference _chatsToUsersRef;
   DatabaseReference _chatsRef;
+  DatabaseReference _usersRef;
   StreamSubscription<Event> _onChatAddedSubscription;
   List<Chat> _chatsList;
+
+  get name => null;
 //  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
+    _chatsToUsersRef = _database.reference().child('chats_to_users');
     _chatsRef = _database.reference().child('chats');
+    _usersRef = _database.reference().child('users');
 
-    Query _userQuery = _chatsRef
+    // Новый пользователь
+    Query _userQuery = _usersRef
         .orderByChild("userId")
         .equalTo(widget.userId);
 
     _userQuery.once().then((DataSnapshot snapshot){
       if (snapshot.value==null)
-        addChatUser();
+        addUser();
     });
 
-    _chatsList = new List();
-    Query _chatQuery = _chatsRef
+    // Новый чат
+    Query _relationsChatsToUsersQuery = _chatsToUsersRef
         .orderByChild("userId")
         .equalTo(widget.userId);
-    _onChatAddedSubscription = _chatQuery.onChildAdded.listen(onEntryAdded);
+    _relationsChatsToUsersQuery.once().then((DataSnapshot snapshot){
+      if (snapshot.value==null)
+        addFirstChat();
+    });
+
+//    Query relationsChatsToUsers = _chatsToUsersRef.child()
+//    Query _userQuery = _chatsRef
+//        .child('users')
+////        .orderByKey()
+//        .equalTo(widget.userId);
+
+//    _userQuery.once().then((DataSnapshot snapshot){
+//      print(snapshot.value);
+//      if (snapshot.value==null)
+//        addChatUser().then((_){
+//          print(_);
+//        });
+//    });
+
+    _chatsList = new List();
+//    Query _chatQuery = _chatsRef
+//        .orderByChild("users")
+//        .equalTo(widget.userId);
+    _onChatAddedSubscription = _relationsChatsToUsersQuery.onChildAdded.listen(onEntryAdded);
 //    _onTodoChangedSubscription =
 //        _todoQuery.onChildChanged.listen(onEntryChanged);
   }
 
   onEntryAdded(Event event) {
     setState(() {
-      _chatsList.add(Chat.fromSnapshot(event.snapshot.key, event.snapshot));
+      ChatsToUsers chatsToUsers = ChatsToUsers.fromSnapshot(event.snapshot.key, event.snapshot);
+      Query _chatQuery = _chatsRef
+        .child(chatsToUsers.chatsId);
+
+      _chatQuery.once().then((DataSnapshot snapshotChat){
+        _chatsList.add(Chat.fromSnapshot(snapshotChat.key, snapshotChat));
+      });
     });
   }
 
@@ -64,22 +101,45 @@ class _HomePageState extends State<HomePage> {
 //    _onTodoChangedSubscription.cancel();
     super.dispose();
   }
+  /**
+   * Добавление пользователя
+   */
+  addUser() {
+    _usersRef.push().set(<String, String> {
+      "userId": widget.userId,
+      "name": "Новый пользователь",
+    }).then((_){
+      print('Transaction  committed.');
+    });
+  }
 
-  addChatUser() {
-//    if (transactionResult.committed) {
-      _chatsRef.push().set(<String, String>{
-        "userId": widget.userId,
-        "name": "Диспетчер",
-        "messeges": "",
-      }).then((_) {
-        print('Transaction  committed.');
-      });
-//    } else {
-//      print('Transaction not committed.');
-//      if (transactionResult.error != null) {
-//        print(transactionResult.error.message);
-//      }
-//    }
+  /**
+   * Добавление первого чата
+   */
+  addFirstChat() {
+    DatabaseReference databaseReference = _chatsRef.push();
+
+    databaseReference.set(<String, String>{
+      "name": "Диспетчер",
+      "messeges": "",
+    });
+    _chatsToUsersRef.push().set({
+      "userId":widget.userId,
+      "chatsId":databaseReference.key
+    });
+  }
+
+  addNewChat(String login) {
+
+//    // Новый пользователь
+//    Query _userQuery = _usersRef
+//        .orderByChild("login")
+//        .equalTo(login);
+//
+//    _userQuery.once().then((DataSnapshot snapshot){
+//      if (snapshot.value==null)
+//        print(snapshot.value);
+//    });
   }
 
   final _textEditingController = TextEditingController();
@@ -111,7 +171,7 @@ class _HomePageState extends State<HomePage> {
               ),
               new FlatButton(
                   onPressed: () {
-//                    addChat(_textEditingController.text.toString());
+                    addNewChat(_textEditingController.text.toString());
                     Navigator.pop(context);
                   },
                   child: const Text("Создать")
@@ -207,7 +267,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: new Text("FastChat"),
+        title: new Text("QuChat"),
         actions: <Widget>[
           new IconButton(
               icon: new Icon(Icons.exit_to_app),

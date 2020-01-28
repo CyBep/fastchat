@@ -35,6 +35,7 @@ class _LetsChatState extends State<LetsChat> {
   ScrollController scrollController = ScrollController();
 
   List<Message> list = [];
+  List<String> _stringTemplate = [];
 
   @override
   void initState() {
@@ -79,7 +80,7 @@ class _LetsChatState extends State<LetsChat> {
     _onMessagesAddedSubscription.cancel();
     _onMessagesChangedSubscription.cancel();
     messages.close();
-//    _textEditingController.dispose();
+    _textEditingController.dispose();
     messages.sink.close();
     scrollController.dispose();
     super.dispose();
@@ -165,10 +166,11 @@ class _LetsChatState extends State<LetsChat> {
                   scrollDirection: Axis.vertical,
                   child: TextFormField(
                     controller: _textEditingController,
-                    maxLines: 1,
+//                    maxLines: 5,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
                     showCursor: true,
                     cursorColor: Colors.blue,
-                    keyboardType: TextInputType.text,
                     maxLengthEnforced: false,
                     cursorWidth: 3.0,
                     style: TextStyle(color: Colors.black),
@@ -179,7 +181,7 @@ class _LetsChatState extends State<LetsChat> {
                       }
                     },
                     decoration: InputDecoration(
-                        hintText: 'Type your message here..',
+                        hintText: 'Сообщение...',
                     )
                   ),
                 )
@@ -190,10 +192,11 @@ class _LetsChatState extends State<LetsChat> {
             padding: EdgeInsets.all(0.0),
             onPressed: () {
               print("button pressed 2");
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Templates()),
-              );
+              _awaitTemplateData(context);
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (context) => Templates()),
+//              );
             },
             child: Container(
               padding: EdgeInsets.all(8.0),
@@ -216,6 +219,31 @@ class _LetsChatState extends State<LetsChat> {
         SizedBox(width: 10.0)
       ],
     );
+  }
+
+  void _awaitTemplateData(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Templates()),
+    );
+
+    // after the SecondScreen result comes back update the Text widget with it
+    setState(() {
+      _textEditingController.clear();
+      _stringTemplate = result;
+      int i = 0;
+      _stringTemplate.forEach((string) {
+        i++;
+        print(string);
+        if (i == _stringTemplate.length) {
+          _textEditingController.text += string;
+        } else {
+          _textEditingController.text += string+"\n";
+        }
+
+      });
+//      _textEditingController.text
+    });
   }
 }
 

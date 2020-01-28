@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
 import 'package:fastchat_0_2/firebase/auth/phone_auth/widgets.dart';
 import 'package:fastchat_0_2/screen/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fastchat_0_2/models/countries.dart';
-import 'package:fastchat_0_2/firebase/auth/phone_auth/code.dart';
+//import 'package:fastchat_0_2/firebase/auth/phone_auth/code.dart';
 import 'package:fastchat_0_2/firebase/auth/phone_auth/verify.dart';
 import 'package:fastchat_0_2/utils/constants.dart';
-//import 'code.dart' show FirebasePhoneAuth, PhoneAuthState;
 //import 'widgets.dart';
 import 'package:fastchat_0_2/screen/chat_page.dart';
+import 'package:fastchat_0_2/firebase/auth/phone_auth/code.dart' show FirebasePhoneAuth, PhoneAuthState;
 
 /*
  *  PhoneAuthUI - this file contains whole ui and controllers of ui
@@ -18,13 +19,17 @@ import 'package:fastchat_0_2/screen/chat_page.dart';
  *  This code can be easily re-usable with any other service type, as UI part and background handling are completely from different sources
  *  code.dart - Class to control background processes in phone auth verification using Firebase
  */
-
+//enum PhoneAuthState {Started,CodeSent,Failed,CodeResent,Error,AutoRetrievalTimeOut,Verified}
 // ignore: must_be_immutable
 class PhoneAuthGetPhone extends StatefulWidget {
+  PhoneAuthGetPhone({Key key, this.auth}): super(key: key);
   /*
    *  cardBackgroundColor & logo values will be passed to the constructor
    *  here we access these params in the _PhoneAuthState using "widget"
    */
+  final BaseAuth auth;
+
+
   Color cardBackgroundColor = Color(0xFF6874C2);
   String logo = Assets.firebase;
   String appName = "Awesome app";
@@ -125,6 +130,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
       case PhoneAuthState.CodeResent:
       case PhoneAuthState.Error:
       case PhoneAuthState.AutoRetrievalTimeOut:
+      case PhoneAuthState.Verified:
         return Scaffold(
           backgroundColor: Colors.white.withOpacity(0.95),
           body: SafeArea(
@@ -136,14 +142,14 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
           ),
         );
         break;
-      case PhoneAuthState.Verified:
-        Navigator.pushNamed(context, '/');
-//        Navigator.of(context).pop();
-//        return HomePage(
-//          userId: _userId,
-//          auth: widget.auth,
-//        );
-        break;
+//      case PhoneAuthState.Verified:
+//        Navigator.pop(context);
+////        Navigator.of(context).pop();
+////        return HomePage(
+////          userId: _userId,
+////          auth: widget.auth,
+////        );
+//        break;
     }
   }
 
@@ -402,7 +408,8 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
     FirebasePhoneAuth.instantiate(
         phoneNumber: countries[_selectedCountryIndex].dialCode +
             _phoneNumberController.text);
-
+      print(countries[_selectedCountryIndex].dialCode);
+      print(_phoneNumberController.text);
     FirebasePhoneAuth.stateStream.listen((state) {
       phoneAuthState = state;
       print(state);
@@ -410,6 +417,8 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
             builder: (BuildContext context) => PhoneAuthVerify()));
       }
+      print("asd");
+      print(state);
       if (state == PhoneAuthState.Failed)
         debugPrint("Seems there is an issue with it");
     });

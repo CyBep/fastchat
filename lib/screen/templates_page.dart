@@ -17,7 +17,7 @@ class _TemplatesState extends State<Templates> {
 
   TextEditingController _textEditingFire = TextEditingController();
   int _typeFire = 0;
-  TypeHouse _typeHouse;
+  TypeHouse _typeHouse = TypeHouse.IndustrialBuilding;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +45,12 @@ class _TemplatesState extends State<Templates> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Padding(
+                        padding: EdgeInsets.only(top: _fixedPadding, left: _fixedPadding),
+                        child: Text(
+                          "Адрес:", style: TextStyle(fontSize: 20.0),
+                        ),
+                      ),
+                      Padding(
                           padding: EdgeInsets.only(top: _fixedPadding, left: _fixedPadding),
                           child: Container(
                             width: _width-(_fixedPadding*2),
@@ -71,12 +77,29 @@ class _TemplatesState extends State<Templates> {
                             // Validate returns true if the form is valid, or false
                             // otherwise.
                             if (_formKey.currentState.validate()) {
-                              // If the form is valid, display a Snackbar.
-                              Scaffold.of(context)
-                                  .showSnackBar(SnackBar(content: Text('Processing Data')));
+                              List<String> _template = [];
+                              _template.add("Адрес: "+_textEditingFire.text);
+                              _template.add("Степень пожара: "+_typeFire.toString());
+
+                              String nameHouse;
+                              switch (_typeHouse) {
+                                case TypeHouse.IndustrialBuilding:
+                                  nameHouse = "Промышленное здание";
+                                  break;
+                                case TypeHouse.House:
+                                  nameHouse = "Частный дом";
+                                  break;
+                                case TypeHouse.Apartment:
+                                  nameHouse = "Квартира";
+                                  break;
+                              }
+                              _template.add("Объект: "+nameHouse);
+                              Navigator.pop(context, _template);
+//                              Scaffold.of(context)
+//                                  .showSnackBar(SnackBar(content: Text('Processing Data')));
                             }
                           },
-                          child: Text('Submit'),
+                          child: Text('Отправить'),
                         ),
                       ),
                     ],
