@@ -192,7 +192,8 @@ class _LetsChatState extends State<LetsChat> {
             padding: EdgeInsets.all(0.0),
             onPressed: () {
               print("button pressed 2");
-              _awaitTemplateData(context);
+//              _awaitTemplateData(context);
+              openDialogButton(context);
 //              Navigator.push(
 //                context,
 //                MaterialPageRoute(builder: (context) => Templates()),
@@ -220,7 +221,38 @@ class _LetsChatState extends State<LetsChat> {
       ],
     );
   }
-
+  Widget bottomGridTiles(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        GridView.count(
+            shrinkWrap: true, // Important
+            crossAxisCount: 4,
+            children: List<Widget>.generate(8, (index) {
+              return GridTile(
+                  child: Card(
+                      color: Colors.blue.shade200,
+                      child: Center(
+                        child: Text('$index'),
+                      )));
+            }))
+      ],
+    );
+  }
+  void _buildDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return bottomGridTiles(context);
+        });
+  }
+  Widget openDialogButton(BuildContext context) {
+    return RaisedButton(
+      onPressed: () => _buildDialog,
+      child: Text("Open Dialog"),
+    );
+  }
   void _awaitTemplateData(BuildContext context) async {
     final result = await Navigator.push(
       context,
