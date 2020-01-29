@@ -193,7 +193,7 @@ class _LetsChatState extends State<LetsChat> {
             onPressed: () {
               print("button pressed 2");
 //              _awaitTemplateData(context);
-              openDialogButton(context);
+              _buildDialog(context);
 //              Navigator.push(
 //                context,
 //                MaterialPageRoute(builder: (context) => Templates()),
@@ -221,6 +221,7 @@ class _LetsChatState extends State<LetsChat> {
       ],
     );
   }
+
   Widget bottomGridTiles(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -228,15 +229,39 @@ class _LetsChatState extends State<LetsChat> {
       children: <Widget>[
         GridView.count(
             shrinkWrap: true, // Important
-            crossAxisCount: 4,
-            children: List<Widget>.generate(8, (index) {
-              return GridTile(
-                  child: Card(
-                      color: Colors.blue.shade200,
+            crossAxisCount: 2,
+            children: <Widget>[
+              GridTile(
+                child: Card(
+                    color: Colors.white,
+                    child: InkWell(
+                      splashColor: Colors.blue.withAlpha(30),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _awaitTemplateData(context);
+                      },
                       child: Center(
-                        child: Text('$index'),
-                      )));
-            }))
+                        child: Text("Квартира"),
+                      ),
+                    )
+                ),
+              ),
+              GridTile(
+                  child: Card(
+                      color: Colors.white,
+                      child: InkWell(
+                        splashColor: Colors.blue.withAlpha(30),
+                        onTap: () {
+                          print('Card tapped.');
+                        },
+                        child: Center(
+                          child: Text("Другой шаблон"),
+                        ),
+                      )
+                  ),
+              )
+            ]
+          )
       ],
     );
   }
@@ -247,12 +272,7 @@ class _LetsChatState extends State<LetsChat> {
           return bottomGridTiles(context);
         });
   }
-  Widget openDialogButton(BuildContext context) {
-    return RaisedButton(
-      onPressed: () => _buildDialog,
-      child: Text("Open Dialog"),
-    );
-  }
+
   void _awaitTemplateData(BuildContext context) async {
     final result = await Navigator.push(
       context,

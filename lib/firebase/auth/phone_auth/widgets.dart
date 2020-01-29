@@ -16,7 +16,7 @@ class PhoneAuthWidgets {
             autofocus: true,
             controller: controller,
             decoration: InputDecoration(
-                hintText: 'Search your country',
+                hintText: 'Найдите вашу страну',
                 contentPadding: const EdgeInsets.only(
                     left: 5.0, right: 5.0, top: 10.0, bottom: 10.0),
                 border: InputBorder.none),

@@ -192,36 +192,38 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget __showListChat() {
-    if (_chatsList.length > 0) {
-      return ListView.builder(
-        itemCount: _chatsList.length,
-        itemBuilder: (BuildContext context, int index){
-          Chat chat = _chatsList[index];
-          return ListTile(
-            title: Text(
-              chat.name,
-              style: TextStyle(fontSize: 20.0),
-            ),
-            onTap: (){
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LetsChat(chat, widget.userId)),
+    return Builder(
+      builder: (BuildContext context) {
+        if (_chatsList.length > 0) {
+          return ListView.builder(
+            itemCount: _chatsList.length,
+            itemBuilder: (BuildContext context, int index){
+              Chat chat = _chatsList[index];
+              return ListTile(
+                title: Text(
+                  chat.name,
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LetsChat(chat, widget.userId)),
+                  );
+                },
+                trailing: IconButton(
+                    icon: (true)
+                        ? Icon(
+                      Icons.done_outline,
+                      color: Colors.green,
+                      size: 20.0,
+                    )
+                        : Icon(Icons.done, color: Colors.grey, size: 20.0),
+                    onPressed: () {
+//                  updateTodo(_todoList[index]);
+                    }),
               );
             },
-            trailing: IconButton(
-                icon: (true)
-                    ? Icon(
-                  Icons.done_outline,
-                  color: Colors.green,
-                  size: 20.0,
-                )
-                    : Icon(Icons.done, color: Colors.grey, size: 20.0),
-                onPressed: () {
-//                  updateTodo(_todoList[index]);
-                }),
           );
-        },
-      );
 //    return ListTile(
 //      title: Row(
 //        children: [
@@ -253,14 +255,13 @@ class _HomePageState extends State<HomePage> {
 ////        });
 //      },
 //    );
-    } else {
-      return Center(
-          child: Text(
-            "Welcome. Your list is empty",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 30.0),
-          ));
-    }
+        } else {
+          return Center(
+              child: CircularProgressIndicator()
+          );
+        }
+      },
+    );
   }
 
   @override

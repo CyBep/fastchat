@@ -417,8 +417,8 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
             builder: (BuildContext context) => PhoneAuthVerify()));
       }
-      print("asd");
-      print(state);
+
+      Navigator.pushNamed(context, '/');
       if (state == PhoneAuthState.Failed)
         debugPrint("Seems there is an issue with it");
     });
