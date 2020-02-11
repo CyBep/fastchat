@@ -62,11 +62,11 @@ class _TemplatesState extends State<Templates> {
     listEditingController.add(new FieldText("Адрес"));
     listEditingController.add(new FieldSelect("Ранг пожара", ["Нет", "1", "1-бис", "2", "3", "4"]));
     listEditingController.add(new FieldText("Этажность дома"));
-    listEditingController.add(new FieldSelect("Степень ответственность", ["1","2","3","4","5"]));
-    listEditingController.add(new FieldText("Площадь пожала м2"));
+    listEditingController.add(new FieldSelect("Степень огнестойкости", ["1","2","3","4","5"]));
+    listEditingController.add(new FieldText("Площадь пожара м2"));
     listEditingController.add(new FieldText("На каком этаже пожар"));
     listEditingController.add(new FieldSelect("Что горит", ["Конструкция","Мебель","Вещи б/у","Мебель и вещи б/у","Бытовая техника"]));
-    listEditingController.add(new FieldSelect("Наличие урны", ["Есть","Нет"]));
+    listEditingController.add(new FieldSelect("Наличие угрозы", ["Есть","Нет"]));
     listEditingController.add(new FieldSelect("Эвакуация", ["Требуется","Не требуется"]));
     listEditingController.add(new FieldText("Что подано на тушение"));
     listEditingController.add(new FieldText("Пострадавшие"));

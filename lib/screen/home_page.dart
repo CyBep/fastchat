@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
   DatabaseReference _counterRef;
   DatabaseReference _chatsToUsersRef;
   DatabaseReference _chatsRef;
-  DatabaseReference _usersRef;
   StreamSubscription<Event> _onChatAddedSubscription;
   List<Chat> _chatsList;
 
@@ -39,17 +38,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _chatsToUsersRef = _database.reference().child('chats_to_users');
     _chatsRef = _database.reference().child('chats');
-    _usersRef = _database.reference().child('users');
-
-    // Новый пользователь
-    Query _userQuery = _usersRef
-        .orderByChild("userId")
-        .equalTo(widget.userId);
-
-    _userQuery.once().then((DataSnapshot snapshot){
-      if (snapshot.value==null)
-        addUser();
-    });
 
     // Новый чат
     Query _relationsChatsToUsersQuery = _chatsToUsersRef
@@ -84,12 +72,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   onEntryAdded(Event event) {
-    setState(() {
-      ChatsToUsers chatsToUsers = ChatsToUsers.fromSnapshot(event.snapshot.key, event.snapshot);
-      Query _chatQuery = _chatsRef
+    ChatsToUsers chatsToUsers = ChatsToUsers.fromSnapshot(event.snapshot.key, event.snapshot);
+    Query _chatQuery = _chatsRef
         .child(chatsToUsers.chatsId);
-
-      _chatQuery.once().then((DataSnapshot snapshotChat){
+    _chatQuery.once().then((DataSnapshot snapshotChat){
+      setState(() {
         _chatsList.add(Chat.fromSnapshot(snapshotChat.key, snapshotChat));
       });
     });
@@ -101,17 +88,6 @@ class _HomePageState extends State<HomePage> {
 //    _onTodoChangedSubscription.cancel();
     super.dispose();
   }
-  /**
-   * Добавление пользователя
-   */
-  addUser() {
-    _usersRef.push().set(<String, String> {
-      "userId": widget.userId,
-      "name": "Новый пользователь",
-    }).then((_){
-      print('Transaction  committed.');
-    });
-  }
 
   /**
    * Добавление первого чата
@@ -122,6 +98,10 @@ class _HomePageState extends State<HomePage> {
     databaseReference.set(<String, String>{
       "name": "Диспетчер",
       "messeges": "",
+    });
+    _chatsToUsersRef.push().set({
+      "userId":"hLzWzJvkhKRqx0zVfQQlGgTBH1v1",
+      "chatsId":databaseReference.key
     });
     _chatsToUsersRef.push().set({
       "userId":widget.userId,

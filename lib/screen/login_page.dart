@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fastchat_0_2/firebase/auth/base_auth.dart';
 import 'package:fastchat_0_2/firebase/auth/phone_auth/widgets.dart';
 import 'package:fastchat_0_2/screen/home_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fastchat_0_2/models/countries.dart';
@@ -77,11 +78,11 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
     // While disposing the widget, we should close all the streams and controllers
 
     // Disposing Stream components
-    _countriesSink.close();
-    _countriesStreamController.close();
+//    _countriesStreamController.close();
 
     // Disposing _countriesSearchController
     _searchCountryController.dispose();
+
     super.dispose();
   }
 
@@ -253,7 +254,7 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
         RaisedButton(
           elevation: 15.0,
           onPressed: () {
-            startPhoneAuth();
+              startPhoneAuth();
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -405,22 +406,27 @@ class _PhoneAuthGetPhoneState extends State<PhoneAuthGetPhone> {
     if(_phoneNumberController.text==""){
       return false;
     }
-    FirebasePhoneAuth.instantiate(
-        phoneNumber: countries[_selectedCountryIndex].dialCode +
-            _phoneNumberController.text);
-      print(countries[_selectedCountryIndex].dialCode);
-      print(_phoneNumberController.text);
+
+    FirebasePhoneAuth.instantiate(phoneNumber: countries[_selectedCountryIndex].dialCode + _phoneNumberController.text);
+
+    print(countries[_selectedCountryIndex].dialCode);
+    print(_phoneNumberController.text);
+
     FirebasePhoneAuth.stateStream.listen((state) {
-      phoneAuthState = state;
-      print(state);
       if (state == PhoneAuthState.CodeSent) {
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
-            builder: (BuildContext context) => PhoneAuthVerify()));
+          builder: (BuildContext context) => PhoneAuthVerify()));
       }
 
-      Navigator.pushNamed(context, '/');
+      if (state == PhoneAuthState.Verified) {
+//        FirebasePhoneAuth.close();
+        Navigator.pushNamed(context, '/');
+      }
+
       if (state == PhoneAuthState.Failed)
         debugPrint("Seems there is an issue with it");
+    }).onDone((){
+      print("done");
     });
   }
 }

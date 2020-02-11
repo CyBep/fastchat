@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fastchat_0_2/firebase/auth/phone_auth/code.dart';
 import 'package:fastchat_0_2/firebase/auth/phone_auth/widgets.dart';
 import 'package:fastchat_0_2/utils/constants.dart';
+import 'package:fastchat_0_2/firebase/auth/phone_auth/code.dart' show FirebasePhoneAuth, PhoneAuthState;
 
 import '../../../pin_test.dart';
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 
 enum PhoneAuthState { Started, CodeSent, CodeResent, Verified, Failed, Error, AutoRetrievalTimeOut }
@@ -16,6 +17,11 @@ class FirebasePhoneAuth {
     firebaseAuth = await FirebaseAuth.instance;
     phone = phoneNumber;
     startAuth();
+  }
+
+  static close() {
+    statusStream.close();
+    phoneAuthState.close();
   }
 
   static startAuth() {
@@ -66,7 +72,7 @@ class FirebasePhoneAuth {
       if (value.user != null) {
         addStatus(status = 'Authentication successful');
         addState(PhoneAuthState.Verified);
-        onAuthenticationSuccessful();
+        onAuthenticationSuccessful(value.user);
       } else {
         addState(PhoneAuthState.Failed);
         addStatus('Invalid code/invalid authentication');
@@ -86,15 +92,36 @@ class FirebasePhoneAuth {
         .then((FirebaseUser user) async {
       addStatus('Authentication successful');
       addState(PhoneAuthState.Verified);
-      onAuthenticationSuccessful();
+      onAuthenticationSuccessful(user);
     }).catchError((error) {
       addState(PhoneAuthState.Error);
       addStatus('Something has gone wrong, please try later(signInWithPhoneNumber) $error');
     });
   }
 
-  static onAuthenticationSuccessful() {
+  /*
+   * После успешной авторизации добавить пользователя в базу данных.
+   */
+  static onAuthenticationSuccessful(FirebaseUser value) {
+    final FirebaseDatabase _database = FirebaseDatabase.instance;
+    DatabaseReference _usersRef = _database.reference().child('users');
 
+    // Новый пользователь
+    Query _userQuery = _usersRef
+        .orderByChild("userId")
+        .equalTo(value.uid);
+
+      _userQuery.once().then((DataSnapshot snapshot){
+        if (snapshot.value==null) {
+          _usersRef.push().set(<String, String> {
+            "userId": value.uid,
+            "login": value.phoneNumber,
+            "name": value.phoneNumber,
+          }).then((_){
+            print('Transaction  committed.');
+          });
+        }
+      });
   }
 
   static addState(PhoneAuthState state){
